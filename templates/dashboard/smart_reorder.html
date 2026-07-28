@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Smart Reorder — BakeryERP{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>🧠 Smart Reorder Predictions</h1>
+    <p>
+        Consumption forecasted from the last
+        <strong>{{ window }} days</strong> of stock movements.
+        Reorder quantities are based on the fastest supplier for each item
+        plus a {{ 7 }}-day safety buffer.
+    </p>
+    <div class="actions">
+        <a class="btn btn-primary"
+           href="{{ url_for('analytics.smart_reorder_xlsx') }}">
+            ⬇ Export Excel
+        </a>
+        <a class="btn" href="?window=7">7d</a>
+        <a class="btn" href="?window=30">30d</a>
+        <a class="btn" href="?window=90">90d</a>
+    </div>
+</section>
+
+<section class="cards">
+    <div class="card stat critical">
+        <h3>Critical</h3>
+        <p class="big">{{ summary.critical }}</p>
+        <small>≤ 3 days of stock</small>
+    </div>
+    <div class="card stat soon">
+        <h3>Reorder Soon</h3>
+        <p class="big">{{ summary.soon }}</p>
+        <small>≤ 7 days of stock</small>
+    </div>
+    <div class="card stat monitor">
+        <h3>Monitor</h3>
+        <p class="big">{{ summary.monitor }}</p>
+        <small>No history yet</small>
+    </div>
+    <div class="card stat">
+        <h3>Total Items</h3>
+        <p class="big">{{ summary.total }}</p>
+    </div>
+</section>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>On hand</th>
+            <th>Min</th>
+            <th>Avg/day</th>
+            <th>Days left</th>
+            <th>Suggested order</th>
+            <th>Supplier</th>
+            <th>Lead time</th>
+            <th>Urgency</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in suggestions %}
+        <tr class="row-{{ s.urgency }}">
+            <td>{{ s.name }}</td>
+            <td>{{ '%.2f'|format(s.quantity) }} {{ s.unit }}</td>
+            <td>{{ '%.2f'|format(s.min_stock) }}</td>
+            <td>{{ '%.2f'|format(s.avg_daily_consumption) }}</td>
+            <td>
+                {% if s.days_until_stockout is none %}
+                    <em>no history</em>
+                {% else %}
+                    {{ s.days_until_stockout }}
+                {% endif %}
+            </td>
+            <td>
+                {% if s.recommended_order_qty > 0 %}
+                    <strong>{{ s.recommended_order_qty }} {{ s.unit }}</strong>
+                {% else %}
+                    <span class="muted">—</span>
+                {% endif %}
+            </td>
+            <td>{{ s.preferred_supplier or '—' }}</td>
+            <td>{{ s.lead_time_days }}d</td>
+            <td><span class="badge badge-{{ s.urgency }}">{{ s.urgency }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

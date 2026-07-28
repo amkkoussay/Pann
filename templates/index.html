@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Welcome — BakeryERP{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>🥖 Welcome to BakeryERP</h1>
+    <p>A smart bakery management system with predictive reorder,
+       profitability analytics, and PDF/Excel exports.</p>
+    <div class="actions">
+        <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Login</a>
+        <a class="btn" href="{{ url_for('auth.signup') }}">Sign up</a>
+    </div>
+</section>
+{% endblock %}

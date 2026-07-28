@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Profitability — BakeryERP{% endblock %}
+{% block content %}
+<section class="page-header">
+    <h1>📊 Real Profitability</h1>
+    <p>
+        Each product's true cost is the sum of its recipe ingredients, not
+        the legacy <code>products.cost</code> field. Waste cost uses the
+        actual <code>production_waste</code> records
+        {% if days %}from the last {{ days }} days{% else %}across all time{% endif %}.
+    </p>
+    <div class="actions">
+        <a class="btn btn-primary"
+           href="{{ url_for('analytics.profitability_xlsx_export',
+                            days=days) }}">
+            ⬇ Export Excel
+        </a>
+        <a class="btn" href="?days=7">7d</a>
+        <a class="btn" href="?days=30">30d</a>
+        <a class="btn" href="?">All time</a>
+    </div>
+</section>
+
+<section class="cards">
+    <div class="card">
+        <h3>Revenue (all products)</h3>
+        <p class="big">${{ '%.2f'|format(totals.revenue) }}</p>
+    </div>
+    <div class="card">
+        <h3>Net profit</h3>
+        <p class="big {% if totals.net_profit < 0 %}neg{% endif %}">
+            ${{ '%.2f'|format(totals.net_profit) }}
+        </p>
+    </div>
+    <div class="card">
+        <h3>Units sold</h3>
+        <p class="big">{{ totals.units_sold }}</p>
+    </div>
+    <div class="card warn">
+        <h3>Waste cost</h3>
+        <p class="big">${{ '%.2f'|format(totals.waste_cost) }}</p>
+    </div>
+</section>
+
+{% if losers %}
+<section class="alert">
+    <h2>⚠️ {{ losers|length }} product(s) sell below recipe cost</h2>
+    <ul>
+        {% for l in losers %}
+            <li>
+                <strong>{{ l.name }}</strong> —
+                cost ${{ '%.2f'|format(l.computed_cost) }}
+                vs price ${{ '%.2f'|format(l.price) }}
+                (loss ${{ '%.2f'|format(-l.margin) }} / unit)
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Recipe cost</th>
+            <th>Margin</th>
+            <th>Margin %</th>
+            <th>Units sold</th>
+            <th>Revenue</th>
+            <th>Waste units</th>
+            <th>Waste cost</th>
+            <th>Net profit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in summaries %}
+        <tr class="{% if s.margin < 0 %}row-loss{% endif %}">
+            <td>{{ s.name }}</td>
+            <td>{{ s.category }}</td>
+            <td>${{ '%.2f'|format(s.price) }}</td>
+            <td>${{ '%.2f'|format(s.computed_cost) }}</td>
+            <td class="{% if s.margin < 0 %}neg{% endif %}">
+                ${{ '%.2f'|format(s.margin) }}
+            </td>
+            <td>{{ '%.1f'|format(s.margin_pct) }}%</td>
+            <td>{{ s.units_sold }}</td>
+            <td>${{ '%.2f'|format(s.revenue) }}</td>
+            <td>{{ s.waste_units }}</td>
+            <td>${{ '%.2f'|format(s.waste_cost) }}</td>
+            <td class="{% if s.net_profit < 0 %}neg{% else %}pos{% endif %}">
+                ${{ '%.2f'|format(s.net_profit) }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

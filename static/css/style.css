@@ -1,0 +1,79 @@
+/* BakeryERP — base styles (small, framework-free) */
+* { box-sizing: border-box; }
+body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, sans-serif;
+    background: #f5f6fa; color: #2c3e50; line-height: 1.5;
+}
+.navbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #2c3e50; color: #fff; padding: 0 1.5rem;
+}
+.nav-brand a { color: #fff; text-decoration: none; font-weight: 700;
+               font-size: 1.25rem; }
+.nav-links { display: flex; gap: 1rem; list-style: none; padding: 0;
+             margin: 0; }
+.nav-links a { color: #ecf0f1; text-decoration: none; padding: 1rem 0; }
+.nav-links a:hover { color: #fff; border-bottom: 2px solid #e74c3c; }
+.nav-user { display: flex; gap: 1rem; align-items: center; }
+.nav-user a { color: #ecf0f1; text-decoration: none; }
+.container { max-width: 1200px; margin: 1.5rem auto; padding: 0 1.5rem; }
+.footer { text-align: center; padding: 1.5rem; color: #95a5a6; }
+
+.flash { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem;
+         border: 1px solid transparent; }
+.flash-success { background: #dff5e1; color: #1e7a31; border-color: #b8e6c2; }
+.flash-danger  { background: #fde2e2; color: #b91c1c; border-color: #f5b7b1; }
+.flash-warning { background: #fff3cd; color: #856404; border-color: #ffe69c; }
+.flash-info    { background: #d6eaf8; color: #1f4e79; border-color: #aed6f1; }
+
+.page-header h1 { margin: 0 0 0.5rem; }
+.page-header p { color: #555; }
+.actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+
+.btn {
+    display: inline-block; padding: 0.5rem 1rem; border-radius: 6px;
+    background: #ecf0f1; color: #2c3e50; text-decoration: none;
+    border: 1px solid #bdc3c7; font-size: 0.9rem;
+}
+.btn:hover { background: #d5dbdb; }
+.btn-primary { background: #2c3e50; color: #fff; border-color: #2c3e50; }
+.btn-primary:hover { background: #1a252f; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+         gap: 1rem; margin: 1.5rem 0; }
+.card { background: #fff; border-radius: 8px; padding: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card h3 { margin: 0; font-size: 0.85rem; color: #7f8c8d; text-transform: uppercase; }
+.card .big { font-size: 2rem; font-weight: 700; margin: 0.25rem 0 0; }
+.card.critical { border-left: 4px solid #e74c3c; }
+.card.soon     { border-left: 4px solid #f39c12; }
+.card.monitor  { border-left: 4px solid #3498db; }
+.card.warn     { border-left: 4px solid #c0392b; }
+.card.stat .big { color: #2c3e50; }
+
+.data-table { width: 100%; border-collapse: collapse; background: #fff;
+              border-radius: 8px; overflow: hidden;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.data-table th, .data-table td { padding: 0.7rem 0.9rem; text-align: left;
+                                  border-bottom: 1px solid #ecf0f1; }
+.data-table th { background: #34495e; color: #fff; font-size: 0.85rem; }
+.data-table tbody tr:hover { background: #f8f9fa; }
+.data-table .neg { color: #c0392b; font-weight: 600; }
+.data-table .pos { color: #27ae60; font-weight: 600; }
+.data-table .muted { color: #95a5a6; }
+.data-table .row-critical { background: #fff5f5; }
+.data-table .row-soon     { background: #fffaf0; }
+.data-table .row-loss     { background: #fef5f5; }
+
+.badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+         font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+.badge-critical { background: #e74c3c; color: #fff; }
+.badge-soon     { background: #f39c12; color: #fff; }
+.badge-monitor  { background: #3498db; color: #fff; }
+.badge-ok       { background: #27ae60; color: #fff; }
+
+.alert { background: #fff3cd; border: 1px solid #ffe69c; padding: 1rem;
+         border-radius: 6px; margin: 1rem 0; }
+.alert h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.alert ul { margin: 0; padding-left: 1.25rem; }

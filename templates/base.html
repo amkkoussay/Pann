@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BakeryERP{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('index') }}">🥖 BakeryERP</a>
+        </div>
+        <ul class="nav-links">
+            {% if session.role in ['admin','manager','cashier'] %}
+                <li><a href="{{ url_for('dashboard.home') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('sales.view_sales') }}">Sales</a></li>
+                <li><a href="{{ url_for('purchases.view_purchases') }}">Purchases</a></li>
+                <li><a href="{{ url_for('production.view_production') }}">Production</a></li>
+                <li><a href="{{ url_for('inventory.view_inventory') }}">Inventory</a></li>
+                {% if session.role in ['admin','manager'] %}
+                    <li><a href="{{ url_for('analytics.smart_reorder') }}">Smart Reorder</a></li>
+                    <li><a href="{{ url_for('analytics.profitability') }}">Profitability</a></li>
+                {% endif %}
+            {% endif %}
+        </ul>
+        <div class="nav-user">
+            {% if session.user_id %}
+                <span>{{ session.username }}</span>
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="flash flash-{{ category }}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© {{ current_year }} BakeryERP — Smart Bakery Management</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
