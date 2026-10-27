@@ -34,6 +34,12 @@ def create_app():
     app = Flask(__name__)
 
     # --- Flask config ---
+    if not SECRET_KEY:
+        raise RuntimeError(
+            "SECRET_KEY is not set. Set SECRET_KEY in the environment "
+            "before starting Pann (see README 'Setup'). The old hardcoded "
+            "key was public in this repository and must not be reused."
+        )
     app.secret_key = SECRET_KEY
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH

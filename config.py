@@ -13,7 +13,10 @@ SQLALCHEMY_DATABASE_URI = f'sqlite:///{DATABASE_PATH}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask configuration
-SECRET_KEY = 'bakery-erp-secret-key-change-in-production'
+# No hardcoded fallback: the old key was public in this repo, so any
+# deployment using it had forgeable sessions. Set SECRET_KEY in the
+# environment; create_app() in app.py refuses to start without it.
+SECRET_KEY = os.getenv('SECRET_KEY')
 SESSION_TYPE = 'filesystem'
 PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
 

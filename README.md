@@ -125,14 +125,34 @@ python -m pytest tests/ -v
 
 You should see `36 passed` in under 10 seconds.
 
-## Default login credentials
+## Setup
 
-| Role     | Username  | Password     |
-|----------|-----------|--------------|
-| Admin    | admin     | admin123     |
-| Manager  | manager   | manager123   |
-| Cashier  | cashier   | cashier123   |
-| Customer | customer1 | customer123  |
+Set a secret key before starting the app (it refuses to start without
+one — there is no default key):
+
+```bash
+export SECRET_KEY='<a long random string>'
+python app.py
+```
+
+### Demo accounts (optional, local use only)
+
+No demo accounts are created by default. To seed the four demo roles
+(admin, manager, cashier, customer1) when the database is first created,
+set the flag and one password per account first — accounts whose
+password variable is unset are skipped, never given a default:
+
+```bash
+export PANN_SEED_DEMO_USERS=1
+export PANN_SEED_ADMIN_PASSWORD='<choose one>'
+export PANN_SEED_MANAGER_PASSWORD='<choose one>'
+export PANN_SEED_CASHIER_PASSWORD='<choose one>'
+export PANN_SEED_CUSTOMER_PASSWORD='<choose one>'
+python app.py
+```
+
+Remove or change these accounts before any shared deployment. Without
+the flag, create the first account via the signup page instead.
 
 The **Smart Reorder** and **Profitability** pages are visible to admin
 and manager roles.

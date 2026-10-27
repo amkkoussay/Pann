@@ -275,31 +275,49 @@ def init_database():
     ''')
 
     # ---- Seed data ----
-    admin_hash = generate_password_hash('admin123')
-    cursor.execute('''
-        INSERT INTO users (username, email, password_hash, role)
-        VALUES (?, ?, ?, ?)
-    ''', ('admin', 'admin@bakeryerp.com', admin_hash, 'admin'))
-
-    sample_users = [
-        ('manager', 'manager@bakeryerp.com',
-         generate_password_hash('manager123'), 'manager'),
-        ('cashier', 'cashier@bakeryerp.com',
-         generate_password_hash('cashier123'), 'cashier'),
-        ('customer1', 'customer1@email.com',
-         generate_password_hash('customer123'), 'customer'),
+    # Demo accounts are created ONLY when PANN_SEED_DEMO_USERS=1, and each
+    # account's password comes from its own environment variable. The old
+    # code seeded admin/admin123, manager/manager123, cashier/cashier123
+    # and customer1/customer123 unconditionally, and the README printed
+    # them — anyone with the repo could log in to a fresh install. With
+    # the flag off (the default) no demo accounts are created at all;
+    # create the first account via the signup page instead. An account
+    # whose password variable is unset is skipped, never given a default.
+    demo_users = [
+        # (username, email, role, password environment variable)
+        ('admin', 'admin@bakeryerp.com', 'admin',
+         'PANN_SEED_ADMIN_PASSWORD'),
+        ('manager', 'manager@bakeryerp.com', 'manager',
+         'PANN_SEED_MANAGER_PASSWORD'),
+        ('cashier', 'cashier@bakeryerp.com', 'cashier',
+         'PANN_SEED_CASHIER_PASSWORD'),
+        ('customer1', 'customer1@email.com', 'customer',
+         'PANN_SEED_CUSTOMER_PASSWORD'),
     ]
-    cursor.executemany('''
-        INSERT INTO users (username, email, password_hash, role)
-        VALUES (?, ?, ?, ?)
-    ''', sample_users)
-
-    cursor.execute('''
-        INSERT INTO customers
-            (user_id, name, email, phone, address, credit_limit)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (4, 'John Doe', 'customer1@email.com', '(555) 111-2222',
-          '456 Customer Ave', 500))
+    if os.getenv('PANN_SEED_DEMO_USERS') == '1':
+        seeded_ids = {}
+        for username, email, role, password_var in demo_users:
+            password = os.getenv(password_var)
+            if not password:
+                print(f"Skipping demo account '{username}': "
+                      f"{password_var} is not set.")
+                continue
+            cursor.execute('''
+                INSERT INTO users (username, email, password_hash, role)
+                VALUES (?, ?, ?, ?)
+            ''', (username, email, generate_password_hash(password), role))
+            seeded_ids[username] = cursor.lastrowid
+        if 'customer1' in seeded_ids:
+            cursor.execute('''
+                INSERT INTO customers
+                    (user_id, name, email, phone, address, credit_limit)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (seeded_ids['customer1'], 'John Doe',
+                  'customer1@email.com', '(555) 111-2222',
+                  '456 Customer Ave', 500))
+    else:
+        print("No demo accounts seeded: set PANN_SEED_DEMO_USERS=1 with "
+              "the PANN_SEED_*_PASSWORD variables to create them.")
 
     # suppliers now have lead_time_days (smart reorder uses this)
     suppliers = [
