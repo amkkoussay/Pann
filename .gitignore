@@ -1,0 +1,12 @@
+# Runtime artifacts — never commit these.
+*.log
+.env
+.env.*
+!*.env.example
+__pycache__/
+*.pyc
+*.db
+*.sqlite3
+node_modules/
+dist/
+.DS_Store
